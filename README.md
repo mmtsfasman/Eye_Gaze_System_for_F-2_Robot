@@ -2,16 +2,16 @@
 
 ## Eye gaze system
 
-[**core.py**](core.py)
+[**core.py**](core.py):
 Core of the system - receive messages from server, update all the states, calculate the winning state, send a string with corresponding bml back to the robot.   
 
-[**process.py**](process.py)
+[**process.py**](process.py):
 Functions rocessing messages and generating corresponding values in the right format to be received by states.
 
 [**states.py**](states.py):
 Classes of states - parent class state and daughter classes with particular states (think, speak, attention_to_person, etc.)
 
-[**utils.py**](utils.py)
+[**utils.py**](utils.py):
 Helping functions.
 
 ## Сообщения между роботом и глазодвигательной моделью
