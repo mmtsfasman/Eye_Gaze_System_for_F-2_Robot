@@ -1,6 +1,7 @@
 import math
 from process import *
-
+import random
+import datetime
 
 def bml(index, direction=''):
     ''' 
@@ -26,11 +27,12 @@ def bml(index, direction=''):
     closed_bmls = ['CLOSED']
 
     if direction == 'person':
-        out_bml = ['target=\"person1\"/>'] 
+        out_bml = 'target=\"person1' 
 
     else:
         if  direction == 'aside':
             out_bmls = left_bmls + right_bmls + down_bmls + up_bmls
+            
 
         elif direction == 'left':
             out_bmls = left_bmls
@@ -44,7 +46,7 @@ def bml(index, direction=''):
         elif direction == 'up':
             out_bmls = down_bmls
 
-        s = choice(out_bmls)    
+        s = random.choice(out_bmls)    
         out_bml = 'lexeme=\"' + s + '\"/><pupils id=\"3\" lexeme=\"' + s
 
     start = '<bml id=\"'+ str(index) + '\" syncmode=\"single\"><head id=\"2\" '
@@ -88,12 +90,14 @@ class state:
     def execute_behavior(self, filename, prev_bml_winner):
         
         new_bml = self.return_bml()
-        if new_bml != self.prev_bml_winner:
-            with open (filename, 'w', encoding='utf-8') as io:
-                inp = io.read()
-                if inp == '':
-                    inp += 'time,state,bml/r/n'
-                io.write(inp + self.time + ',' + self.__class__.__name__ + ',' + self.return_bml() + '/r/n')
+        
+        if new_bml != prev_bml_winner:
+            print(self.__class__.__name__ + str(self.value))
+            with open (filename, 'a', encoding='utf-8') as io:
+                #inp = io.read()
+                #if inp == '':
+                #    inp += 'time,state,bml/r/n'
+                io.write(str(self.time) + ',' + datetime.datetime.now().strftime('%H:%M:%S.%f') + ',' + self.__class__.__name__ + ',' + self.return_bml() + '\r\n')
             return new_bml
 
 
@@ -107,7 +111,8 @@ class think(state):
     def update_st(self, m):
         
         x = self.time
-        y = math.log(x^2, math.e)
+        #y = math.log(x^2, math.e)
+        y = 1000*math.cos(x/1000)+1000
         self.value = y
         self.points.append((x, y)) 
     
@@ -125,7 +130,7 @@ class attention_to_person(state):
         if m.prev_gaze == 'person' or self.const == None:
             self.const = x
         if self.const:
-            y = (x + self.const)/5
+            y = (x + self.const)/1000
             self.value = y
             self.points.append((x, y))
 

@@ -17,7 +17,7 @@ async def handle_echo(reader, writer):
 
 
     
-async def timer_work(loop):
+async def timer_work(loop, t):
     
     global q
     while True:
@@ -28,7 +28,7 @@ async def timer_work(loop):
             #all_states = []
             thi = think()
             sp = speak()
-            att = attention_to_person
+            att = attention_to_person()
             rem = remember()
             quo = quote()
             ant = anti_social()
@@ -44,21 +44,28 @@ async def timer_work(loop):
             prev_winner_state
         except NameError:
             prev_winner_state = state()
+            
+        try:
+            mess
+        except NameError:
+            mess = process()
         
         if q.empty():
-            global_update(all_states)           
+            qu = None           
         else:
-            global_update(all_states, q.get)
+            qu = q.get
+            
+        global_update(all_states, mess, qu)
             
             
         if winner_changed(prev_winner_state, all_states) == True:
-            new_state_winner = the_winner(all_states, prev_winner_state) 
-            new_bml_winner = new_state_winner.execute_behavior('results.txt', prev_bml_winner)
+            new_winner_state = the_winner(all_states)
+            new_bml_winner = new_winner_state.execute_behavior('results.csv', prev_bml_winner)
             prev_bml_winner = new_bml_winner
             prev_winner_state = new_winner_state
             #send(global_update(q.get)) 
-            #print(q.get())
-        await asyncio.sleep(0.04, loop=loop)
+            #print(q.get())            
+        await asyncio.sleep(t, loop=loop)
     return True
 
 q = queue.Queue()
@@ -69,7 +76,7 @@ server = loop.run_until_complete(coro)
 # Serve requests until Ctrl+C is pressed
 print('Serving on {}'.format(server.sockets[0].getsockname()))
 try:
-    timer_task = asyncio.ensure_future(timer_work(loop))
+    timer_task = asyncio.ensure_future(timer_work(loop, 0.04))
     loop.run_until_complete(asyncio.wait([timer_task]))
 except KeyboardInterrupt:
     timer_task.cancel()
