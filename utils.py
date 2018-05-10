@@ -63,5 +63,55 @@ def the_winner(all_states):
     winner_state = random.choice(new_leaders)
     return winner_state
     
+    
+def bml(index, direction=''):
+    ''' 
+    input:
+    -id of output bml
+    -side of the gaze (left, right, up, down, person) = True
+    output:
+    bml str with full bml for gaze to the corresponding side
+    (return randomized from corresponding packages)
+
+    example:
+
+    >>>bml(23, direction='left')
+    output: '<bml id="23" syncmode="single"><head id="2" lexeme="eyes_down_left3"/>
+        <pupils id="3" lexeme="eyes_down_left3"/></bml>'
+    '''
+    
+    
+    left_bmls = ['eyes_down_left3', 'eyes_up_left3']
+    right_bmls = ['eyes_down_right3', 'eyes_up_right3']
+    down_bmls = ['DOWN']
+    up_bmls = ['UP']
+    closed_bmls = ['CLOSED']
+
+    if direction == 'person':
+        out_bml = 'target=\"person1' 
+
+    else:
+        if  direction == 'aside':
+            out_bmls = left_bmls + right_bmls + down_bmls + up_bmls
+            
+
+        elif direction == 'left':
+            out_bmls = left_bmls
+
+        elif direction == 'right':
+            out_bmls = right_bmls
+
+        elif direction == 'down':
+            out_bmls = up_bmls
+
+        elif direction == 'up':
+            out_bmls = down_bmls
+
+        s = random.choice(out_bmls)    
+        out_bml = 'lexeme=\"' + s + '\"/><pupils id=\"3\" lexeme=\"' + s
+
+    start = '<bml id=\"'+ str(index) + '\" syncmode=\"single\"><head id=\"2\" '
+    end = '\"/></bml>'
+    return start + out_bml + end
   
     
