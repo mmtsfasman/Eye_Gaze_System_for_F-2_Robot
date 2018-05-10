@@ -12,7 +12,7 @@ Functions rocessing messages and generating corresponding values in the right fo
 Classes of states - parent class state and daughter classes with particular states (think, speak, attention_to_person, etc.)
 
 [**utils.py**](utils.py):
-Helping functions.
+Secondary functions.
 
 ## Сообщения между роботом и глазодвигательной моделью
 
