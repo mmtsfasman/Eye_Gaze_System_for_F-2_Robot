@@ -21,7 +21,8 @@ def listen(host, port):
         data = c.recv(int.from_bytes(size, byteorder='little'))
         c.close
         q.put(data.decode())
-        print('Received')
+        #print('Received')
+        print(data.decode())
 
 def timer_call(f_stop, target):
     if not f_stop.is_set():
@@ -42,16 +43,23 @@ def work():
         
     if winner_changed(prev_winner_state, all_states) == True:
         new_winner_state = the_winner(all_states)
-        new_bml_winner = new_winner_state.execute_behavior('results.csv', prev_bml_winner)
-        send(new_bml_winner)
-        prev_bml_winner = new_bml_winner        
-        prev_winner_state = new_winner_state
+        new_bml = new_winner_state.return_bml()
+        print(new_winner_state.__class__.__name__)
+        print(new_bml)
+        if bml_changed(prev_bml_winner, new_bml):
+           
+            new_winner_state.execute_behavior('results.csv', prev_bml_winner)
+            send(new_bml)
+            prin('sent')
+            prev_bml_winner = new_bml       
+            prev_winner_state = new_winner_state
 
 
 def send(bml): 
-    sock = socket.socket()
-    sock.connect(('localhost', 6061))
-    sock.send(bml.encode("utf-8"))
+    sock = socket(AF_INET, SOCK_STREAM)
+    sock.connect(('127.0.0.1', 6061))
+    bytebml = bml.encode('utf-8')
+    sock.send(len(bytebml).to_bytes(4,byteorder='little')+bytebml)
     sock.close()
     
 #initialize all_states

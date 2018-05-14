@@ -56,13 +56,14 @@ class process:
                     self.question = True
                 
             elif message.endswith('Gaze completed.'):
+                print('prev gaze - person')
                 self.prev_gaze = 'person'
                 
             elif message.endswith('Turn completed.'):
                 self.prev_gaze = 'aside'
                
-            if message.endswith('vis'):
-                visualize(all_states)
+            #if message.endswith('vis'):
+             #   visualize(all_states)
                 
             if re.search('Stroke', message):
                 self.phrase = True
@@ -80,9 +81,9 @@ class process:
                     self.agree = True
                 if re.search('(\bнет\b|\bне\b)', text):
                     self.disagree = True
-                if re.search('(потому\b|потому\bчто\b)', text):
+                if re.search('(потому\b|потому что\b)', text):
                     self.reasoning = True
-                if re.search('(\например|\bк\bпримеру\b)', text):
+                if re.search('(\bнапример|\bк примеру\b)', text):
                     self.illustr = True
                 if re.search('\"', text):
                     self.disagree = True

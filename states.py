@@ -2,10 +2,9 @@ import math
 from process import *
 import random
 import datetime
-from utils import bml
+from utils import bml, bml_changed
 import numpy as np
 from scipy.optimize import fsolve
-
 
 #parent class of state
 class state:
@@ -39,18 +38,10 @@ class state:
     def return_bml(self):        
         return bml(self.time, direction=self.direct)
     
-    def execute_behavior(self, filename, prev_bml_winner):
-        
-        new_bml = self.return_bml()
-        
-        if new_bml != prev_bml_winner:
-            #print(self.__class__.__name__ + str(self.value))
-            with open (filename, 'a', encoding='utf-8') as io:
-                #inp = io.read()
-                #if inp == '':
-                #    inp += 'time,state,bml/r/n'
-                io.write(str(self.time) + ',' + datetime.datetime.now().strftime('%H:%M:%S.%f') + ',' + self.__class__.__name__ + ',' + self.return_bml() + '\r\n')
-            return new_bml
+    def execute_behavior(self, filename, new_bml):
+        with open (filename, 'a', encoding='utf-8') as io:
+             io.write(str(self.time) + ',' + datetime.datetime.now().strftime('%H:%M:%S.%f') + ',' + self.__class__.__name__ + ',' + self.return_bml() + '\r\n')
+
 
 
 #daughter classes of states
@@ -63,7 +54,7 @@ class think(state):
     def update_st(self, m):
         x = self.time
         #y = math.log(x^2, math.e)
-        y = 100000*math.cos(x/10000)+100000
+        y = 1000*math.cos(x/5000)+1000
                
         if y < 0:
             y = 0
@@ -82,12 +73,12 @@ class attention_to_person(state):
     def update_st(self, m):
         #print('константа аттеншн: ' + str(self.const))
         x = self.time
-        if m.prev_gaze == 'person' or self.const == None:
+        if m.prev_gaze == 'person' or self.const == None or self.value >= 2500:
             self.const = x
         if m.question == True:
-            y = x^16
+            y = 2500
         else:
-            y = 5*(x - self.const)
+            y = (x - self.const)/7
         if y < 0:
             y = 0
         self.value = y 
@@ -107,7 +98,7 @@ class speak(state):
         if m.phrase == True:
             x = self.time            
                         
-            const = 20000
+            const = 2500
             
             #to compute the parabola equation with start at the phrase start point, and peak at the stroke point
             def equations(p):

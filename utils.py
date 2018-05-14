@@ -65,7 +65,7 @@ def winner_changed(prev_winner_state, all_states):
     
     maxValue = (sorted([v.value for v in all_states]))[-1]
     new_leaders = [st.__class__.__name__ for st in all_states if st.value >= maxValue]
-    if prev_winner_state.value == maxValue or prev_winner_state.__class__.__name__ in new_leaders:
+    if prev_winner_state.__class__.__name__ in new_leaders:
         return False
     else:
         return True
@@ -85,6 +85,21 @@ def the_winner(all_states):
     return winner_state
     
     
+
+
+def bml_changed(prev_bml_winner, new_bml):
+    pers = re.compile('(?:person1)|^')
+    aside = re.compile('(?:lexeme.\".+?\")|^')
+    if re.search(pers, new_bml).group() != '' and re.search(pers, prev_bml_winner).qroup() != '':
+        print(re.search(aside, new_bml).group())
+        return False
+    elif re.search(aside, new_bml).group() != re.search(aside, prev_bml_winner).group():
+        #print(re.search(aside, new_bml).group())
+        return True
+
+    
+
+
 def bml(index, direction=''):
     ''' 
     input:
@@ -104,12 +119,12 @@ def bml(index, direction=''):
     
     left_bmls = ['eyes_down_left3', 'eyes_up_left3']
     right_bmls = ['eyes_down_right3', 'eyes_up_right3']
-    down_bmls = ['DOWN']
-    up_bmls = ['UP']
+    down_bmls = ['avtoman2']
+    up_bmls = ['think9', 'think8']
     closed_bmls = ['CLOSED']
 
     if direction == 'person':
-        out_bml = 'target=\"person1' 
+        out_bml = '<gaze id=\"2\" target=\"person1' 
 
     else:
         if  direction == 'aside':
@@ -127,11 +142,14 @@ def bml(index, direction=''):
 
         elif direction == 'up':
             out_bmls = down_bmls
+            
+        elif direction == 'closed':
+            out_bmls = closed_bmls
 
         s = random.choice(out_bmls)    
-        out_bml = 'lexeme=\"' + s + '\"/><pupils id=\"3\" lexeme=\"' + s
+        out_bml = '<head id=\"2\" lexeme=\"' + s + '\"/><pupils id=\"3\" lexeme=\"' + s
 
-    start = '<bml id=\"'+ str(index) + '\" syncmode=\"single\"><head id=\"2\" '
+    start = '<bml id=\"'+ str(index) + '\" syncmode=\"join\">'
     end = '\"/></bml>'
     return start + out_bml + end
   
