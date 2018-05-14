@@ -4,7 +4,7 @@ from states import *
 from socket import *
 import random 
 import math
-
+import matplotlib.pyplot as plt
 
 def time_to_millisec(when=None):
     ''' 
@@ -28,11 +28,32 @@ def global_update(all_states, mess, queue=None):
     time = time_to_millisec()
     
     if queue:
-        m.new_values(queue, time)    
+        #print(queue)
+        mess.new_values(queue, time, all_states)    
         
     for st in all_states:
+        #print(st.__class__.__name__ + ' | ' + str(st.value))
         st.time = time
         st.update_st(mess)
+        
+        
+def visualize(all_states):
+    plt.xlabel('time (ms)')
+    plt.ylabel('activation')
+      
+    for st in all_states:
+        name = st.__class__.__name__
+        if st.points:
+            xs = [p[0] for p in st.points]
+            ys = [p[1] for p in st.points]            
+            plt.plot(xs, ys, label=name)
+            print(name + ' | ' + str(xs) + str(ys))
+        else:
+            print('No points found in ' + name)
+    
+    plt.legend()
+    plt.show()
+
         
             
 def winner_changed(prev_winner_state, all_states):
@@ -42,8 +63,8 @@ def winner_changed(prev_winner_state, all_states):
             False - if winner state is the same
     '''
     
-    maxValue = (sorted(all_states))[-1].value
-    new_leaders = [st.__class__.__name__ for st in all_states if st.value == maxValue]
+    maxValue = (sorted([v.value for v in all_states]))[-1]
+    new_leaders = [st.__class__.__name__ for st in all_states if st.value >= maxValue]
     if prev_winner_state.value == maxValue or prev_winner_state.__class__.__name__ in new_leaders:
         return False
     else:

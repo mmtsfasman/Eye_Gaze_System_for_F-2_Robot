@@ -3,14 +3,16 @@ from process import *
 import random
 import datetime
 from utils import bml
+import numpy as np
+from scipy.optimize import fsolve
 
 
 #parent class of state
 class state:
     
-    def __init__(self, points=None):
+    def __init__(self):
         self.direct = ''
-        self.points = points or []
+        self.points = []
         self.time = 0     
         self.value = 0
     
@@ -32,7 +34,7 @@ class state:
         y = 0
         self.value = y
         self.points.append((x, y))
-        
+                       
         
     def return_bml(self):        
         return bml(self.time, direction=self.direct)
@@ -59,14 +61,17 @@ class think(state):
         self.direct = 'aside'
         
     def update_st(self, m):
-        
         x = self.time
         #y = math.log(x^2, math.e)
-        y = 1000*math.cos(x/1000)+1000
-        self.value = y
-        self.points.append((x, y)) 
+        y = 100000*math.cos(x/10000)+100000
+               
+        if y < 0:
+            y = 0
+        self.value = y 
+        self.points.append((x, y))
+            
     
-    
+
 class attention_to_person(state):
     
     def __init__(self):
@@ -75,14 +80,18 @@ class attention_to_person(state):
         self.const = None
         
     def update_st(self, m):
-        
+        #print('константа аттеншн: ' + str(self.const))
         x = self.time
         if m.prev_gaze == 'person' or self.const == None:
             self.const = x
-        if self.const:
-            y = (x + self.const)/1000
-            self.value = y
-            self.points.append((x, y))
+        if m.question == True:
+            y = x^16
+        else:
+            y = 5*(x - self.const)
+        if y < 0:
+            y = 0
+        self.value = y 
+        self.points.append((x, y))
 
         
 class speak(state):
@@ -90,18 +99,34 @@ class speak(state):
     def __init__(self):
         state.__init__(self)
         self.direct = 'person'
+        self.abc = [] 
         
+
     def update_st(self, m):
         
         if m.phrase == True:
-            x = self.time
-            y = -(x - m.stroke)^2 + 100
-            self.value = y
-            self.points.append((x, y))
+            x = self.time            
                         
-            #0 = a*((start - stroke)^2) + b*start + 200
-            #0 = a*((end - stroke)^2) + b*end + 200        
-        
+            const = 20000
+            
+            #to compute the parabola equation with start at the phrase start point, and peak at the stroke point
+            def equations(p):
+                    a, b, c = p
+                    return (2*a*m.stroke+b, a*(m.stroke**2)+b*m.stroke-const+c, a*(m.start**2)+b*m.start+c)
+                
+            if self.abc == [] or m.start < self.time:          
+                a,b,c =  fsolve(equations, (1, 1, 1))
+                self.abc = [a, b, c]
+            
+            y = self.abc[0]*(x**2) + self.abc[1]*x + self.abc[2]
+            print(str(self.abc[0])+'*(x**2) + ' +str(self.abc[1]) + '*x + ' + str(self.abc[2]))
+            
+            if y < 0:
+                y = 0
+                
+            self.value = y 
+            self.points.append((x, y))
+
         
 class agree(state):
     
@@ -114,7 +139,9 @@ class agree(state):
         if m.agree == True:
             x = self.time
             y = x^2
-            self.value = y
+            if y < 0:
+                y = 0
+            self.value = y 
             self.points.append((x, y))
             
             
@@ -123,6 +150,16 @@ class anti_social(state):
     def __init__(self):
         state.__init__(self)
         self.direct = 'aside'
+        
+    def update_st(self, m):
+        if m.disagree == True:
+            x = self.time
+            y = x
+            if y < 0:
+                y = 0
+            self.value = y 
+            self.points.append((x, y))
+    
         
         
 class quote(state):
@@ -137,7 +174,9 @@ class quote(state):
                 
             x = self.time
             y = x^2
-            self.value = y
+            if y < 0:
+                y = 0
+            self.value = y 
             self.points.append((x, y))
     
     
@@ -152,6 +191,8 @@ class remember(state):
         if m.reasononing == True or m.illustr == True:
             x = self.time
             y = x^2
-            self.value = y
+            if y < 0:
+                y = 0
+            self.value = y 
             self.points.append((x, y))
         
