@@ -44,7 +44,7 @@ class state:
         new_bml = self.return_bml()
         
         if new_bml != prev_bml_winner:
-            print(self.__class__.__name__ + str(self.value))
+            #print(self.__class__.__name__ + str(self.value))
             with open (filename, 'a', encoding='utf-8') as io:
                 #inp = io.read()
                 #if inp == '':
@@ -119,7 +119,7 @@ class speak(state):
                 self.abc = [a, b, c]
             
             y = self.abc[0]*(x**2) + self.abc[1]*x + self.abc[2]
-            print(str(self.abc[0])+'*(x**2) + ' +str(self.abc[1]) + '*x + ' + str(self.abc[2]))
+            #print(str(self.abc[0])+'*(x**2) + ' +str(self.abc[1]) + '*x + ' + str(self.abc[2]))
             
             if y < 0:
                 y = 0

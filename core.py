@@ -74,7 +74,7 @@ except NameError:
 
     
 host = '127.0.0.1'
-port = 6069
+port = 6060
 q = Queue()
 
 try:

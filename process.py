@@ -75,7 +75,6 @@ class process:
                 stroke_time = re.findall('delay ([0-9]*)\.', message)[0]
                 self.stroke = self.start + int(stroke_time)                
                 
-                print(str(self.start) + ', stroke = ' + str(self.stroke))
                 
                 if re.search('\bда\b', text):
                     self.agree = True

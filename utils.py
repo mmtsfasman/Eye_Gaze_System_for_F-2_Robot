@@ -47,9 +47,9 @@ def visualize(all_states):
             xs = [p[0] for p in st.points]
             ys = [p[1] for p in st.points]            
             plt.plot(xs, ys, label=name)
-            print(name + ' | ' + str(xs) + str(ys))
-        else:
-            print('No points found in ' + name)
+            #print(name + ' | ' + str(xs) + str(ys))
+        #else:
+            #print('No points found in ' + name)
     
     plt.legend()
     plt.show()
