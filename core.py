@@ -43,10 +43,16 @@ def work():
     if winner_changed(prev_winner_state, all_states) == True:
         new_winner_state = the_winner(all_states)
         new_bml_winner = new_winner_state.execute_behavior('results.csv', prev_bml_winner)
+        send(new_bml_winner)
         prev_bml_winner = new_bml_winner        
         prev_winner_state = new_winner_state
 
 
+def send(bml): 
+    sock = socket.socket()
+    sock.connect(('localhost', 6061))
+    sock.send(bml.encode("utf-8"))
+    sock.close()
     
 #initialize all_states
 try:
