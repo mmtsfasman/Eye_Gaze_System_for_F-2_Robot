@@ -38,6 +38,10 @@ def global_update(all_states, mess, queue=None):
         
         
 def visualize(all_states):
+    '''
+    visualizes states' curves on a plot (x - time, y - activation of the state)
+    '''
+    
     plt.xlabel('time (ms)')
     plt.ylabel('activation')
       
@@ -47,9 +51,6 @@ def visualize(all_states):
             xs = [p[0] for p in st.points]
             ys = [p[1] for p in st.points]            
             plt.plot(xs, ys, label=name)
-            #print(name + ' | ' + str(xs) + str(ys))
-        #else:
-            #print('No points found in ' + name)
     
     plt.legend()
     plt.show()
@@ -80,24 +81,22 @@ def the_winner(all_states):
     
     maxValue = (sorted(all_states))[-1].value
     new_leaders = [st for st in all_states if st.value == maxValue]
-    
     winner_state = random.choice(new_leaders)
-    return winner_state
-    
-    
+    return winner_state    
 
 
 def bml_changed(prev_bml_winner, new_bml):
-    pers = re.compile('(?:person1)|^')
-    aside = re.compile('(?:lexeme.\".+?\")|^')
-    if re.search(pers, new_bml).group() != '' and re.search(pers, prev_bml_winner).qroup() != '':
-        print(re.search(aside, new_bml).group())
+    '''
+    take new bml and the preveious one, compare them
+    if changed - True, if the same one - False
+    '''
+    
+    pers = re.compile('(?:person1)|$')
+    aside = re.compile('(?:lexeme.\".+?\")|$')
+    if re.search(pers, new_bml).group() != '' and re.search(pers, prev_bml_winner).group() != '':
         return False
     elif re.search(aside, new_bml).group() != re.search(aside, prev_bml_winner).group():
-        #print(re.search(aside, new_bml).group())
         return True
-
-    
 
 
 def bml(index, direction=''):

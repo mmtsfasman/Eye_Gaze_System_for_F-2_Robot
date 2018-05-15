@@ -1,14 +1,6 @@
 import re
-from utils import time_to_millisec, visualize
-'''
-try:
-    ""Потому что да, например?" started at 16:06:43.487. Stroke delay 600."
-    "Speech completed."
-    "Gaze completed."
-    "Turn completed."
-    ""Потому что?" started at 16:06:43.487. Stroke delay 600."
-    
-'''
+from utils import time_to_millisec
+
 
 class process:
     '''
@@ -41,10 +33,16 @@ class process:
     def new_values(self, queue, time, all_states):
 
         for message in queue:
-            if self.end < time:
-                self.question = False
+
+            #process message about previous gaze("Gaze completed." message means that it was towards a person, "Turn completed" - aside)
+            if message.endswith('Gaze completed.'):
+                self.prev_gaze = 'person'                
+            elif message.endswith('Turn completed.'):
+                self.prev_gaze = 'aside'
             
-            if message.endswith('Speech completed.'):
+
+            #if speech completed - all attributes connected to speech and its parameters -> to default
+            elif message.endswith('Speech completed.'):
                 self.end = time
                 self.phrase = False                
                 self.agree = False
@@ -52,31 +50,29 @@ class process:
                 self.citation = False
                 self.reasononing = False
                 self.illustr = False
+
+                #if phrase was question - question parameter to True (cause robot will be expecting an answer after the phrase is completed)
                 if re.search('\?', self.text):
                     self.question = True
-                
-            elif message.endswith('Gaze completed.'):
-                print('prev gaze - person')
-                self.prev_gaze = 'person'
-                
-            elif message.endswith('Turn completed.'):
-                self.prev_gaze = 'aside'
-               
-            #if message.endswith('vis'):
-             #   visualize(all_states)
-                
-            if re.search('Stroke', message):
+
+            #if robot speaking - update speech parameters and statement characteristics depending on text and time limits  
+            elif re.search('Stroke', message):
+
+                #robot is speaking
                 self.phrase = True
                 
                 text = re.findall('\"(.*)\"', message)[0].lower()
-                
+                self.text = text
+
+                #speech start time
                 start_time = re.findall('at (.+?\.[0-9]+)\.', message)[0]
                 self.start = time_to_millisec(start_time)
-                
+
+                #speech stroke time
                 stroke_time = re.findall('delay ([0-9]*)\.', message)[0]
                 self.stroke = self.start + int(stroke_time)                
-                
-                
+
+                #speech characteristics depending on text
                 if re.search('\bда\b', text):
                     self.agree = True
                 if re.search('(\bнет\b|\bне\b)', text):
@@ -85,10 +81,10 @@ class process:
                     self.reasoning = True
                 if re.search('(\bнапример|\bк примеру\b)', text):
                     self.illustr = True
-                if re.search('\"', text):
-                    self.disagree = True
-                
-                self.text = text
+
+            #question parameter to default when speech is completed and the previous phrase doesn't affect the robot anymore
+            if self.end < time:
+                self.question = False
 
 
     

@@ -54,7 +54,7 @@ class think(state):
     def update_st(self, m):
         x = self.time
         #y = math.log(x^2, math.e)
-        y = 1000*math.cos(x/5000)+1000
+        y = 1000*math.cos(x/50000)+1000
                
         if y < 0:
             y = 0
@@ -78,7 +78,7 @@ class attention_to_person(state):
         if m.question == True:
             y = 2500
         else:
-            y = (x - self.const)/7
+            y = (x - self.const)/20
         if y < 0:
             y = 0
         self.value = y 

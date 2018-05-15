@@ -44,13 +44,11 @@ def work():
     if winner_changed(prev_winner_state, all_states) == True:
         new_winner_state = the_winner(all_states)
         new_bml = new_winner_state.return_bml()
-        print(new_winner_state.__class__.__name__)
-        print(new_bml)
-        if bml_changed(prev_bml_winner, new_bml):
-           
+        if bml_changed(prev_bml_winner, new_bml) == True:
+            print(new_winner_state.__class__.__name__)
+            print(new_bml)
             new_winner_state.execute_behavior('results.csv', prev_bml_winner)
             send(new_bml)
-            prin('sent')
             prev_bml_winner = new_bml       
             prev_winner_state = new_winner_state
 
