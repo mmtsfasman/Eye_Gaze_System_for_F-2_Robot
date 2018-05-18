@@ -95,7 +95,9 @@ def bml_changed(prev_bml_winner, new_bml):
     aside = re.compile('(?:lexeme.\".+?\")|$')
     if re.search(pers, new_bml).group() != '' and re.search(pers, prev_bml_winner).group() != '':
         return False
-    elif re.search(aside, new_bml).group() != re.search(aside, prev_bml_winner).group():
+    elif re.search(aside, new_bml).group() == re.search(aside, prev_bml_winner).group():
+        return False
+    else:
         return True
 
 
@@ -117,10 +119,10 @@ def bml(index, direction=''):
     
     
     left_bmls = ['eyes_down_left3', 'eyes_up_left3']
-    right_bmls = ['eyes_down_right3', 'eyes_up_right3']
+    right_bmls = ['eyes_down_right3', 'relax1', 'eyes_up_right3']
     down_bmls = ['avtoman2']
-    up_bmls = ['think9', 'think8']
-    closed_bmls = ['CLOSED']
+    up_bmls = ['think6', 'think4']
+    closed_bmls = []
 
     if direction == 'person':
         out_bml = '<gaze id=\"2\" target=\"person1' 

@@ -33,7 +33,11 @@ class process:
     def new_values(self, queue, time, all_states):
 
         for message in queue:
-
+            
+            #question parameter to default when speech is completed and the previous phrase doesn't affect the robot anymore
+            if self.end < time:
+                self.question = False
+                
             #process message about previous gaze("Gaze completed." message means that it was towards a person, "Turn completed" - aside)
             if message.endswith('Gaze completed.'):
                 self.prev_gaze = 'person'                
@@ -82,9 +86,7 @@ class process:
                 if re.search('(\bнапример|\bк примеру\b)', text):
                     self.illustr = True
 
-            #question parameter to default when speech is completed and the previous phrase doesn't affect the robot anymore
-            if self.end < time:
-                self.question = False
+
 
 
     

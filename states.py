@@ -52,9 +52,9 @@ class think(state):
         self.direct = 'aside'
         
     def update_st(self, m):
+        
         x = self.time
-        #y = math.log(x^2, math.e)
-        y = 1000*math.cos(x/50000)+1000
+        y = 1000*math.cos(x/10000)+1000
                
         if y < 0:
             y = 0
@@ -71,9 +71,9 @@ class attention_to_person(state):
         self.const = None
         
     def update_st(self, m):
-        #print('константа аттеншн: ' + str(self.const))
+        
         x = self.time
-        if m.prev_gaze == 'person' or self.const == None or self.value >= 2500:
+        if m.prev_gaze == 'person' or self.const == None or self.value >= 2000:
             self.const = x
         if m.question == True:
             y = 2500

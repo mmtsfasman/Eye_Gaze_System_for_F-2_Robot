@@ -1,20 +1,16 @@
-
-# coding: utf-8
-
-# In[ ]:
-
-
 from socket import *
 from time import sleep
 from threading import Event, Thread, Timer
 import time
-from utils import bml, bml_changed, time_to_millisec
+from states import *
+from utils import *
+from process import *
 
 
 count = 0
-interval = 2
+interval = 8
 
-def random_gaze(prev_bml, time):
+def random_gaze(prev_bml):
     
     side = ['person', 'aside', 'aside', 'aside', 'aside']
     si = random.choice(side)
@@ -26,23 +22,38 @@ def random_gaze(prev_bml, time):
 
 
 
+
+def gaze_leftright(prev_bml):
+    time = time_to_millisec()
+     
+    bml_right = '<bml id=\"'+ str(time) + '\" syncmode=\"join\"><head id=\"2\" lexeme=\"eyes_down_right3\"/><pupils id=\"3\" lexeme=\"eyes_down_right3\"/></bml>'
+
+    bml_left = '<bml id=\"'+ str(time) + '\" syncmode=\"join\"><head id=\"2\" lexeme=\"eyes_down_left3\"/><pupils id=\"3\" lexeme=\"eyes_down_left3\"/></bml>'
+
+    if bml_changed(prev_bml, bml_right):
+        return bml_right
+     
+    elif bml_changed(prev_bml, bml_left):
+        return bml_left
+ 
+ 
+
+
+
 def timer_call(f_stop, target):
     if not f_stop.is_set():
         Timer(target - time.clock(), timer_call, [f_stop, target+interval]).start()
         work()
         
 
+
+
 def work():
-    
-    global prev_bml
-    
-    new_bml = random_gaze(prev_bml)
-    while not new_bml:
-        new_bml = random_gaze(prev_bml)
-    
+ 
+    global prev_bml    
+    new_bml = gaze_leftright(prev_bml)    
     prev_bml = new_bml
     send(new_bml)
-
 
 def send(bml): 
     sock = socket(AF_INET, SOCK_STREAM)
@@ -72,5 +83,5 @@ try:
 except KeyboardInterrupt:
     print("Interrupted.")
     f_stop.set()
-    visualize(all_states)
+
 
